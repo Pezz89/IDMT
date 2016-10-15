@@ -70,16 +70,18 @@ void draw() {
 void drawGround() {
   /* TO IMPLEMENT IN STEP 1 */
   beginShape();
-
-  int idx = 0;
-  for (Iterator<float> it = groundLevel.iterator(); it.hasNext(); idx++) {
-
-    float level = it.next();
-    vertex(idx, level)
+  int idx;
+  for(idx = 0; idx < groundLevel.length; idx++){
+    vertex(idx, groundLevel[idx]);
   }
+  vertex(idx, height);
+  vertex(0, height);
+  fill(100);
+  endShape();
   
   // See the groundLevel[] variable to know where to draw the ground
   // Ground should be drawn in a dark gray
+
 }
 
 // Draw the two tanks (including cannons)
@@ -89,6 +91,15 @@ void drawTanks() {
   // Draw the two tanks as semicircles using the positions and sizes at the top of the file
   // Tanks should be different colours
   // Also be sure to draw the cannons, using the angles given at the top of the file
+  
+  // Draw tank 1
+  fill(0, 0, 255);
+  arc(tank1X, tank1Y, 80, 80, PI, 2*PI);
+  
+    // Draw tank 2
+  fill(255, 0, 0);
+  arc(tank2X, tank2Y, 80, 80, PI, 2*PI);
+  
 }
 
 // Draw the projectile, if one is currently in motion
