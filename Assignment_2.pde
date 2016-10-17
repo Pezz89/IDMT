@@ -58,8 +58,8 @@ void draw() {
   
   background(200);
   
-  drawGround();
   drawTanks();
+  drawGround();
   drawProjectile();
   drawStatus();
   
@@ -69,6 +69,7 @@ void draw() {
 // Draw the terrain under the tanks
 void drawGround() {
   /* TO IMPLEMENT IN STEP 1 */
+  strokeWeight(5);
   beginShape();
   int idx;
   for(idx = 0; idx < groundLevel.length; idx++){
@@ -93,12 +94,17 @@ void drawTanks() {
   // Also be sure to draw the cannons, using the angles given at the top of the file
   
   // Draw tank 1
+  strokeWeight(10);
+  line(tank1X, tank1Y, tank1X + (cannonLength * cos(tank1CannonAngle)), tank1Y - (cannonLength * sin(tank1CannonAngle)));
+  strokeWeight(5);
   fill(0, 0, 255);
-  arc(tank1X, tank1Y, 80, 80, PI, 2*PI);
+  arc(tank1X, tank1Y, tankDiameter, tankDiameter, PI, 2*PI);
   
     // Draw tank 2
   fill(255, 0, 0);
-  arc(tank2X, tank2Y, 80, 80, PI, 2*PI);
+  arc(tank2X, tank2Y, tankDiameter, tankDiameter, PI, 2*PI);
+  
+
   
 }
 
