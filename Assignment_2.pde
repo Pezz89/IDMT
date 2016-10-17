@@ -12,7 +12,7 @@
 float[] groundLevel;  // Y coordinate of the ground for each X coordinate
 float tank1X, tank1Y, tank2X, tank2Y; // Positions of the two tanks
 float tankDiameter = 30;  // Diameter of the tanks
-float cannonLength = 20;  // How long the cannon on each tank extends
+float cannonLength = 25;  // How long the cannon on each tank extends
 float gravity = 0.05;      // Strength of gravity
 
 // Current state of the game
@@ -100,7 +100,10 @@ void drawTanks() {
   fill(0, 0, 255);
   arc(tank1X, tank1Y, tankDiameter, tankDiameter, PI, 2*PI);
   
-    // Draw tank 2
+  // Draw tank 2
+  strokeWeight(10);
+  line(tank2X, tank2Y, tank2X + (cannonLength * cos(tank2CannonAngle)), tank2Y - (cannonLength * sin(tank2CannonAngle)));
+  strokeWeight(5);
   fill(255, 0, 0);
   arc(tank2X, tank2Y, tankDiameter, tankDiameter, PI, 2*PI);
   
@@ -162,21 +165,66 @@ void updateProjectilePositionAndCheckCollision() {
 void nextPlayersTurn() {
   player1Turn = !player1Turn;
 }
-
+float validateAngle(float angle) {
+    if(angle > PI)
+  {
+    angle = PI;
+  }
+  else if(angle < 0)
+  {
+    angle = 0.0;
+  }
+  return angle;
+}
 // Handle a key press: update the status of the current player's tank
 void keyPressed() {
   if(playerHasWon != 0)  // Stop the game when someone has won
     return;
   if(projectileInMotion) // No keys respond while the projectile is firing
     return;
-    
+  
+
   /* TO IMPLEMENT IN STEP 2 */  
     
   // Use the key variable to check which key was pressed.
   // Arrow keys don't have a printable character, so they show up as CODED
   // Use the left and right arrows to adjust the angle, the up and down arrows
   // to adjust strength.
-  
+  switch(key) {
+    case CODED: 
+    if(player1Turn) {
+      switch(keyCode) {
+        case LEFT: tank1CannonAngle += PI/180.0;
+          break;
+        case RIGHT: tank1CannonAngle -= PI/180.0;
+          break;
+        case UP: tank1CannonAngle += PI/180.0;
+          break;
+        case DOWN: tank1CannonAngle += PI/180.0;
+          break;
+      }
+      tank1CannonAngle = validateAngle(tank1CannonAngle);
+    }
+    else
+    {
+      switch(keyCode) {
+        case LEFT: tank2CannonAngle += PI/180.0;
+          break;
+        case RIGHT: tank2CannonAngle -= PI/180.0;
+          break;
+        case UP: tank2CannonAngle += PI/180.0;
+          break;
+        case DOWN: tank2CannonAngle += PI/180.0;
+          break;
+      }
+      tank2CannonAngle = validateAngle(tank2CannonAngle);
+    }
+    break;
+    case ' ':
+    player1Turn = !player1Turn;
+    break;
   // Space bar fires the projectile. Initially in step 2, just have it switch
   // to the next player.
+
+  }
 }
