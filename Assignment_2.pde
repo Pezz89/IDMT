@@ -13,6 +13,8 @@ float[] groundLevel;  // Y coordinate of the ground for each X coordinate
 float tank1X, tank1Y, tank2X, tank2Y; // Positions of the two tanks
 float tankDiameter = 30;  // Diameter of the tanks
 float cannonLength = 25;  // How long the cannon on each tank extends
+float tank1CannonX1, tank1CannonX2, tank1CannonY1, tank1CannonY2;
+float tank2CannonX1, tank2CannonX2, tank2CannonY1, tank2CannonY2;
 float gravity = 0.05;      // Strength of gravity
 
 // Current state of the game
@@ -27,6 +29,7 @@ float tank1CannonStrength = 3, tank2CannonStrength = 3; // Strength of intended 
 boolean projectileInMotion = false;
 float projectilePositionX, projectilePositionY;
 float projectileVelocityX, projectileVelocityY;
+
 
 void setup() {
   size(960, 480);  // Set the screen size
@@ -95,14 +98,23 @@ void drawTanks() {
   
   // Draw tank 1
   strokeWeight(10);
-  line(tank1X, tank1Y, tank1X + (cannonLength * cos(tank1CannonAngle)), tank1Y - (cannonLength * sin(tank1CannonAngle)));
+  
+  tank1CannonX1 = tank1X;
+  tank1CannonX2 = tank1X + (cannonLength * cos(tank1CannonAngle));
+  tank1CannonY1 = tank1Y;
+  tank1CannonY2 = tank1Y - (cannonLength * sin(tank1CannonAngle));
+  line(tank1CannonX1, tank1CannonY1, tank1CannonX2, tank1CannonY2);
   strokeWeight(5);
   fill(0, 0, 255);
   arc(tank1X, tank1Y, tankDiameter, tankDiameter, PI, 2*PI);
   
   // Draw tank 2
   strokeWeight(10);
-  line(tank2X, tank2Y, tank2X + (cannonLength * cos(tank2CannonAngle)), tank2Y - (cannonLength * sin(tank2CannonAngle)));
+  tank2CannonX1 = tank2X;
+  tank2CannonX2 = tank2X + (cannonLength * cos(tank2CannonAngle));
+  tank2CannonY1 = tank2Y;
+  tank2CannonY2 = tank2Y - (cannonLength * sin(tank2CannonAngle));
+  line(tank2CannonX1, tank2CannonY1, tank2CannonX2, tank2CannonY2);
   strokeWeight(5);
   fill(255, 0, 0);
   arc(tank2X, tank2Y, tankDiameter, tankDiameter, PI, 2*PI);
@@ -115,9 +127,14 @@ void drawTanks() {
 void drawProjectile() {
   if(!projectileInMotion)  // Don't draw anything if there's no projectile in motion
     return;
+  // Save the current global stroke colour
+  // (Hacky workaround due to polluted global namespace, must be a better way of doing this...)
+  int strokeColourVar = g.strokeColor;
   noStroke();
   fill(255, 255, 0);
   ellipse(projectilePositionX, projectilePositionY, 8, 8);
+  // Recover previously set stroke colour
+  stroke(strokeColourVar);
 }
 
 // Draw the status text on the top of the screen
@@ -148,12 +165,14 @@ void updateProjectilePositionAndCheckCollision() {
     return;
     
   /* TO IMPLEMENT IN STEP 3: UPDATE POSITION */
+  
   // Tasks: increment the position according to the velocity
-  // For later: the velocity according to gravity (and optionally wind)    
+  // For later: the velocity according to gravity (and optionally wind)  
 
   /* TO IMPLEMENT IN STEP 4: GRAVITY */
   // Update the velocity of the projectile according to the value of gravity at the top of the file
-  
+  projectilePositionX += tank1CannonStrength * cos(tank1CannonAngle);
+  projectilePositionY += tank1CannonStrength * -sin(tank1CannonAngle);
   /* TO IMPLEMENT IN STEP 5: COLLISION DETECTION */
   // Compare the location of the projectile to the ground and to the two tanks
   // When the projectile hits something, it stops moving (change projectileInMotion)
@@ -192,39 +211,47 @@ void keyPressed() {
   // to adjust strength.
   switch(key) {
     case CODED: 
-    if(player1Turn) {
-      switch(keyCode) {
-        case LEFT: tank1CannonAngle += PI/180.0;
-          break;
-        case RIGHT: tank1CannonAngle -= PI/180.0;
-          break;
-        case UP: tank1CannonAngle += PI/180.0;
-          break;
-        case DOWN: tank1CannonAngle += PI/180.0;
-          break;
+      if(player1Turn) {
+        switch(keyCode) {
+          case LEFT: tank1CannonAngle += PI/180.0;
+            break;
+          case RIGHT: tank1CannonAngle -= PI/180.0;
+            break;
+          case UP: tank1CannonStrength += 1;
+            break;
+          case DOWN: tank1CannonStrength -= 1;
+            break;
+        }
+        tank1CannonAngle = validateAngle(tank1CannonAngle);
       }
-      tank1CannonAngle = validateAngle(tank1CannonAngle);
-    }
-    else
-    {
-      switch(keyCode) {
-        case LEFT: tank2CannonAngle += PI/180.0;
-          break;
-        case RIGHT: tank2CannonAngle -= PI/180.0;
-          break;
-        case UP: tank2CannonAngle += PI/180.0;
-          break;
-        case DOWN: tank2CannonAngle += PI/180.0;
-          break;
+      else
+      {
+        switch(keyCode) {
+          case LEFT: tank2CannonAngle += PI/180.0;
+            break;
+          case RIGHT: tank2CannonAngle -= PI/180.0;
+            break;
+          case UP: tank2CannonStrength += 1;
+            break;
+          case DOWN: tank2CannonStrength -= 1;
+            break;
+        }
+        tank2CannonAngle = validateAngle(tank2CannonAngle);
       }
-      tank2CannonAngle = validateAngle(tank2CannonAngle);
-    }
-    break;
+      break;
+      
+    // Space bar fires the projectile. Initially in step 2, just have it switch
+    // to the next player.
     case ' ':
-    player1Turn = !player1Turn;
-    break;
-  // Space bar fires the projectile. Initially in step 2, just have it switch
-  // to the next player.
-
+      if(player1Turn) {
+        projectileInMotion = true;
+        projectilePositionX = tank1CannonX2;
+        projectilePositionY = tank1CannonY2;
+        drawProjectile();
+      }
+      else {
+      }
+      
+      break;
   }
 }
