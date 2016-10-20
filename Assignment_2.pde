@@ -31,9 +31,31 @@ boolean projectileInMotion = false;
 float projectilePositionX, projectilePositionY;
 float projectileVelocityX, projectileVelocityY;
 
+PImage bg;
+
+// Terrain generation function adapted from: http://www.redblobgames.com/articles/noise/introduction.html
+void GenerateTerain() {
+    float amp[] = {2.0, 1.1, 0.2, 0.001, 0.01, 0.01};
+    int frequency[] = {1, 2, 4, 8, 16, 32};
+    float phase = random(0, 2*PI);
+    
+    for(int i = 0; i < width; i++) {
+      groundLevel[i] = 0;
+    }
+    for(int i = 0; i < width; i++) {
+      for(int j = 0; j < frequency.length; j++) {
+        groundLevel[i] += (sin(2*PI * frequency[j]*i/width + phase)*amp[j])*30;
+      }  
+    }
+    for(int i = 0; i < width; i++) {
+      groundLevel[i] += height - (height / 3.5);
+    }
+}
 
 void setup() {
   size(960, 480);  // Set the screen size
+  // Background image taken from https://www.behance.net/gallery/31516629/CARTOON-BACKGROUNDS
+  bg = loadImage("background.png");
   
   // Initialize the ground level
   groundLevel = new float[width];
@@ -48,6 +70,7 @@ void setup() {
   for(float i = width * 0.8; i < width; i++) {
     groundLevel[(int)i] = player2Height;    
   }
+  GenerateTerain();
   
   // Set the location of the two tanks so they rest on the ground at opposite sides
   tank1X = width * 0.1;
@@ -60,7 +83,7 @@ void draw() {
   // Main draw loop. Farm out the individual tasks to other functions
   // for clarity (though it could be equivalently implemented entirely in this function.)
   
-  background(200);
+  background(bg);
   
   drawTanks();
   drawGround();
@@ -108,7 +131,7 @@ void drawTanks() {
   strokeCap(SQUARE);
   
   strokeWeight(5);
-  fill(0, 0, 255);
+  fill(255, 0, 0);
   arc(tank1X, tank1Y, tankDiameter, tankDiameter, PI, 2*PI);
   
   // Draw tank 2
@@ -119,7 +142,7 @@ void drawTanks() {
   tank2CannonY2 = tank2Y - (cannonLength * sin(tank2CannonAngle));
   line(tank2CannonX1, tank2CannonY1, tank2CannonX2, tank2CannonY2);
   strokeWeight(5);
-  fill(255, 0, 0);
+  fill(0, 0, 255);
   arc(tank2X, tank2Y, tankDiameter, tankDiameter, PI, 2*PI);
 }
 
