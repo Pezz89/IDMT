@@ -1,0 +1,77 @@
+\documentclass[titlepage]{scrartcl}
+\usepackage{enumitem}
+\usepackage[british]{babel}
+\usepackage[style=apa, backend=biber]{biblatex}
+\DeclareLanguageMapping{british}{british-apa}
+\usepackage{url}
+\usepackage{float}
+\restylefloat{table}
+\usepackage{perpage}
+\MakePerPage{footnote}
+\usepackage{abstract}
+\usepackage{graphicx}
+% Create hyperlinks in bibliography
+\usepackage{hyperref}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\setkomafont{disposition}{\normalfont\bfseries}
+
+\usepackage{blindtext}
+\setkomafont{disposition}{\normalfont\fontsize{12}{17}\bfseries}
+\setkomafont{section}{\normalfont\fontsize{12}{17}\bfseries}
+\setkomafont{subsection}{\normalfont\fontsize{12}{17}\itshape}
+\setkomafont{subsubsection}{\normalfont\fontsize{12}{17}\itshape}
+
+\graphicspath{{./resources/}}
+\addbibresource{~/Documents/library.bib}
+
+\usepackage{etoolbox}
+\makeatletter
+\makeatother
+
+\DeclareCiteCommand{\citeyearpar}
+    {}
+    {\mkbibparens{\bibhyperref{\printdate}}}
+    {\multicitedelim}
+    {}
+
+
+\begin{document}
+    \title{ECS742\\Interactive Digital Media Techniques\\Assignment 2: Processing Game}
+    \subtitle{\LARGE{Report}}
+    \author{Sam Perry\\Student Number: 160842984}
+    \date{}
+
+    \maketitle
+
+
+    \section*{Procedure}
+    Following instructions provided to create the initial game was a relatively
+    straight forward task, given previous experience in programming. The most
+    prominent problem was an array indexing error that occured when the
+    projectile left the screen. This was quickly fixed by adding conditions to
+    check if the projectile was on screen before attempting to access the
+    groundLevel array.
+
+    On completion of this, a number of further features were implemented to
+    build on the basic game. These included adding graphics to the background
+    (and other aesthetic changes), generating more detailed maps at random, and
+    adding a blast radius to projectiles when coliding with objects.
+
+    \section*{Findings}
+    Project illustrated the cross-over between a number of animation and DSP
+    techniques: Terrain generation, framerate and collision detection.
+    
+    The main difficulty, although still rather minor, lied in adjusting to the
+    java language. As familiar concepts such as passing variables by reference
+    do not exist in the language, learning the ``java/processing way'' of
+    implementing features was the main skill aquired in this project.
+
+    There are many further improvments that could be implemented in this
+    project. However, it would be of great benefit to refactor a large amount
+    of the code to take advantage of programming models such as OOP. This would
+    allow for quicker and less ``hacky'' implementations of features and would
+    improve overall code quality.
+    \printbibliography
+\end{document}
