@@ -17,6 +17,8 @@ float tank1CannonX1, tank1CannonX2, tank1CannonY1, tank1CannonY2;
 float tank2CannonX1, tank2CannonX2, tank2CannonY1, tank2CannonY2;
 float gravity = 0.05;      // Strength of gravity
 float velocity;
+boolean contactMade = false;
+int projectileSize = 8;
 
 // Current state of the game
 
@@ -139,14 +141,18 @@ void drawTanks() {
 
 // Draw the projectile, if one is currently in motion
 void drawProjectile() {
-  if(!projectileInMotion)  // Don't draw anything if there's no projectile in motion
+  if(!projectileInMotion && !contactMade)  // Don't draw anything if there's no projectile in motion
     return;
+  else if(contactMade && projectileSize > 32) {
+    contactMade = false;
+    nextPlayersTurn();
+  }
   // Save the current global stroke colour
-  // (Hacky workaround due to polluted global namespace, must be a better way of doing this...)
+  // (Hacky workaround due to everything being in the global namespace)
   int strokeColourVar = g.strokeColor;
   noStroke();
   fill(255, 255, 0);
-  ellipse(projectilePositionX, projectilePositionY, 8, 8);
+  ellipse(projectilePositionX, projectilePositionY, projectileSize, projectileSize);
   // Recover previously set stroke colour
   stroke(strokeColourVar);
 }
@@ -175,18 +181,25 @@ void drawStatus() {
 
 // Move the projectile and check for a collision
 void updateProjectilePositionAndCheckCollision() {
-  if(!projectileInMotion)
+  if(!projectileInMotion && !contactMade) {
+    projectileSize = 8;
     return;
+  }
   if(player1Turn) {
     /* TO IMPLEMENT IN STEP 3: UPDATE POSITION */
     
-    // Tasks: increment the position according to the velocity
-    // For later: the velocity according to gravity (and optionally wind)  
-  
+    if(!contactMade) {
+      // Tasks: increment the position according to the velocity
+      // For later: the velocity according to gravity (and optionally wind)  
+      projectilePositionX += tank1CannonStrength * cos(tank1CannonAngle);
+      projectilePositionY += (velocity * -sin(tank1CannonAngle));
+    }
+    else {
+      projectileSize += 1;
+    }
+    
     /* TO IMPLEMENT IN STEP 4: GRAVITY */
     // Update the velocity of the projectile according to the value of gravity at the top of the file
-    projectilePositionX += tank1CannonStrength * cos(tank1CannonAngle);
-    projectilePositionY += (velocity * -sin(tank1CannonAngle));
     velocity -= gravity;
     
     /* TO IMPLEMENT IN STEP 5: COLLISION DETECTION */
@@ -194,10 +207,16 @@ void updateProjectilePositionAndCheckCollision() {
     // (Conditions ordered to avoid indexing error in final condition)
    
     // When the projectile hits the ground, it's the next player's turn
-    if(projectilePositionX >= width || projectilePositionX <= 0 || projectilePositionY > groundLevel[round(projectilePositionX)]) {
+    if(projectilePositionX >= width || projectilePositionX <= 0) {
       // When the projectile hits something, it stops moving (change projectileInMotion)
       projectileInMotion = false;
+      contactMade = true;
       nextPlayersTurn();
+
+    }
+    else if (projectilePositionY > groundLevel[round(projectilePositionX)]) {
+      projectileInMotion = false;
+      contactMade = true;
     }
 
   }
@@ -206,11 +225,15 @@ void updateProjectilePositionAndCheckCollision() {
     
     // Tasks: increment the position according to the velocity
     // For later: the velocity according to gravity (and optionally wind)  
-  
-    /* TO IMPLEMENT IN STEP 4: GRAVITY */
-    // Update the velocity of the projectile according to the value of gravity at the top of the file
-    projectilePositionX += tank2CannonStrength * cos(tank2CannonAngle);
-    projectilePositionY += (velocity * -sin(tank2CannonAngle));
+    if(!contactMade) {
+      // Tasks: increment the position according to the velocity
+      // For later: the velocity according to gravity (and optionally wind)  
+      projectilePositionX += tank2CannonStrength * cos(tank2CannonAngle);
+      projectilePositionY += (velocity * -sin(tank2CannonAngle));
+    }
+    else {
+      projectileSize += 1;
+    }
     velocity -= gravity;
     
     /* TO IMPLEMENT IN STEP 5: COLLISION DETECTION */
@@ -218,18 +241,24 @@ void updateProjectilePositionAndCheckCollision() {
     // (Conditions ordered to avoid indexing error in final condition)
    
     // When the projectile hits the ground, it's the next player's turn
-    if(projectilePositionX >= width || projectilePositionX <= 0 || projectilePositionY > groundLevel[round(projectilePositionX)]) {
+    if(projectilePositionX >= width || projectilePositionX <= 0) {
       // When the projectile hits something, it stops moving (change projectileInMotion)
       projectileInMotion = false;
+      contactMade = false;
       nextPlayersTurn();
+      
+    }
+    else if (projectilePositionY > groundLevel[round(projectilePositionX)]) {
+      projectileInMotion = false;
+      contactMade = true;
     }
   }  
   // When the projectile hits a tank, the other player wins
   // Collision detection for full circle implemented as extra computation for semi-circle is unnecessary
-  if(pow((projectilePositionX-tank2X), 2) + pow((projectilePositionY - tank2Y), 2) < pow((tankDiameter/2), 2)) {
+  if(dist(projectilePositionX, projectilePositionY, tank2X, tank2Y) < (tankDiameter/2.0) + (projectileSize / 2)) {
     playerHasWon = 1;
   }
-  else if(pow((projectilePositionX-tank1X), 2) + pow((projectilePositionY - tank1Y), 2) < pow((tankDiameter/2), 2)) {
+  else if(dist(projectilePositionX, projectilePositionY, tank1X, tank1Y) < (tankDiameter/2.0) + (projectileSize / 2)) {
     playerHasWon = 2;
   }
 }
