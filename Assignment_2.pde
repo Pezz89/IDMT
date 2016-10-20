@@ -97,8 +97,19 @@ void drawGround() {
   }
   vertex(idx, height);
   vertex(0, height);
-  fill(236, 216, 138);
+  fill(250, 236, 157);
   endShape();
+  
+  strokeWeight(0);
+  beginShape();
+  for(idx = 0; idx < groundLevel.length; idx++){
+    vertex(idx, (groundLevel[idx] * 0.85)+70);
+  }
+  vertex(idx, height);
+  vertex(0, height);
+  fill(235, 222, 137);
+  endShape();
+  strokeWeight(5);
   
   // See the groundLevel[] variable to know where to draw the ground
   // Ground should be drawn in a dark gray
@@ -159,6 +170,15 @@ void drawProjectile() {
 
 // Draw the status text on the top of the screen
 void drawStatus() {
+  float strokeWeightVar = g.strokeWeight;
+  int strokeColourVar = g.strokeColor;
+  strokeWeight(2);
+  stroke(230, 249, 211);
+  fill(201, 246, 203);
+  rect(0, 0, width, 45);
+  strokeWeight(strokeWeightVar);
+  stroke(strokeColourVar);
+  
   textSize(24);
   textAlign(LEFT);
   fill(0);
@@ -168,14 +188,14 @@ void drawStatus() {
   else if(playerHasWon == 2)
     text("Player 2 Wins!", 10, 30);
   else if(player1Turn) { // player1Turn == true means it's player 1's turn
-    text("Player 1's turn", 10, 30);
+    text("Player 1's turn |", 10, 30);
      textAlign(RIGHT);   
-    text("Angle: " + tank1CannonAngle + " Strength: " + tank1CannonStrength, width - 10, 30);
+    text("| Angle: " + tank1CannonAngle + " | Strength: " + tank1CannonStrength, width - 10, 30);
   }
   else {                 // player1Turn == false
-    text("Player 2's turn", 10, 30);
+    text("Player 2's turn |", 10, 30);
     textAlign(RIGHT);
-    text("Angle: " + tank2CannonAngle + " Strength: " + tank2CannonStrength, width - 10, 30);
+    text("| Angle: " + tank2CannonAngle + " | Strength: " + tank2CannonStrength, width - 10, 30);
   }
 }
 
@@ -207,10 +227,10 @@ void updateProjectilePositionAndCheckCollision() {
     // (Conditions ordered to avoid indexing error in final condition)
    
     // When the projectile hits the ground, it's the next player's turn
-    if(projectilePositionX >= width || projectilePositionX <= 0) {
+    if(round(projectilePositionX) >= width || round(projectilePositionX) <= 0) {
       // When the projectile hits something, it stops moving (change projectileInMotion)
       projectileInMotion = false;
-      contactMade = true;
+      contactMade = false;
       nextPlayersTurn();
 
     }
@@ -256,9 +276,13 @@ void updateProjectilePositionAndCheckCollision() {
   // When the projectile hits a tank, the other player wins
   // Collision detection for full circle implemented as extra computation for semi-circle is unnecessary
   if(dist(projectilePositionX, projectilePositionY, tank2X, tank2Y) < (tankDiameter/2.0) + (projectileSize / 2)) {
+    projectileInMotion = false;
+    contactMade = true;
     playerHasWon = 1;
   }
   else if(dist(projectilePositionX, projectilePositionY, tank1X, tank1Y) < (tankDiameter/2.0) + (projectileSize / 2)) {
+    projectileInMotion = false;
+    contactMade = true;
     playerHasWon = 2;
   }
 }
