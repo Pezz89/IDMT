@@ -95,7 +95,7 @@ void drawGround() {
   }
   vertex(idx, height);
   vertex(0, height);
-  fill(100);
+  fill(236, 216, 138);
   endShape();
   
   // See the groundLevel[] variable to know where to draw the ground
@@ -123,7 +123,7 @@ void drawTanks() {
   
   strokeWeight(5);
   fill(255, 0, 0);
-  arc(tank1X, tank1Y, tankDiameter, tankDiameter, PI, 2*PI);
+  ellipse(tank1X, tank1Y, tankDiameter, tankDiameter);
   
   // Draw tank 2
   strokeWeight(10);
@@ -134,7 +134,7 @@ void drawTanks() {
   line(tank2CannonX1, tank2CannonY1, tank2CannonX2, tank2CannonY2);
   strokeWeight(5);
   fill(0, 0, 255);
-  arc(tank2X, tank2Y, tankDiameter, tankDiameter, PI, 2*PI);
+  ellipse(tank2X, tank2Y, tankDiameter, tankDiameter);
 }
 
 // Draw the projectile, if one is currently in motion
