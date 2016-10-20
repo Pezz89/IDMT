@@ -163,31 +163,61 @@ void drawStatus() {
 void updateProjectilePositionAndCheckCollision() {
   if(!projectileInMotion)
     return;
+  if(player1Turn) {
+    /* TO IMPLEMENT IN STEP 3: UPDATE POSITION */
     
-  /* TO IMPLEMENT IN STEP 3: UPDATE POSITION */
+    // Tasks: increment the position according to the velocity
+    // For later: the velocity according to gravity (and optionally wind)  
   
-  // Tasks: increment the position according to the velocity
-  // For later: the velocity according to gravity (and optionally wind)  
+    /* TO IMPLEMENT IN STEP 4: GRAVITY */
+    // Update the velocity of the projectile according to the value of gravity at the top of the file
+    projectilePositionX += tank1CannonStrength * cos(tank1CannonAngle);
+    projectilePositionY += (velocity * -sin(tank1CannonAngle));
+    velocity -= gravity;
+    
+    /* TO IMPLEMENT IN STEP 5: COLLISION DETECTION */
+    // Compare the location of the projectile to the ground and to the two tanks
+    // (Conditions ordered to avoid indexing error in final condition)
+   
+    // When the projectile hits the ground, it's the next player's turn
+    if(projectilePositionX >= width || projectilePositionX <= 0 || projectilePositionY > groundLevel[round(projectilePositionX)]) {
+      // When the projectile hits something, it stops moving (change projectileInMotion)
+      projectileInMotion = false;
+      nextPlayersTurn();
+    }
 
-  /* TO IMPLEMENT IN STEP 4: GRAVITY */
-  // Update the velocity of the projectile according to the value of gravity at the top of the file
-  projectilePositionX += tank1CannonStrength * cos(tank1CannonAngle);
-  projectilePositionY += (velocity * -sin(tank1CannonAngle));
-  velocity -= gravity;
+  }
+  else {
+    /* TO IMPLEMENT IN STEP 3: UPDATE POSITION */
+    
+    // Tasks: increment the position according to the velocity
+    // For later: the velocity according to gravity (and optionally wind)  
   
-  /* TO IMPLEMENT IN STEP 5: COLLISION DETECTION */
-  // Compare the location of the projectile to the ground and to the two tanks
-  // (Conditions ordered to avoid indexing error in final condition)
-  if(projectilePositionX > width || projectilePositionX < 0 || projectilePositionY > groundLevel[round(projectilePositionX)]) {
-    // When the projectile hits something, it stops moving (change projectileInMotion)
-    projectileInMotion = false;
-    nextPlayersTurn();
-  }
-  else if((projectilePositionX-center_x)^2 + (y - center_y)^2 < radius^2) {
-  }
-
-  // When the projectile hits the ground, it's the next player's turn
+    /* TO IMPLEMENT IN STEP 4: GRAVITY */
+    // Update the velocity of the projectile according to the value of gravity at the top of the file
+    projectilePositionX += tank2CannonStrength * cos(tank2CannonAngle);
+    projectilePositionY += (velocity * -sin(tank2CannonAngle));
+    velocity -= gravity;
+    
+    /* TO IMPLEMENT IN STEP 5: COLLISION DETECTION */
+    // Compare the location of the projectile to the ground and to the two tanks
+    // (Conditions ordered to avoid indexing error in final condition)
+   
+    // When the projectile hits the ground, it's the next player's turn
+    if(projectilePositionX >= width || projectilePositionX <= 0 || projectilePositionY > groundLevel[round(projectilePositionX)]) {
+      // When the projectile hits something, it stops moving (change projectileInMotion)
+      projectileInMotion = false;
+      nextPlayersTurn();
+    }
+  }  
   // When the projectile hits a tank, the other player wins
+  // Collision detection for full circle implemented as extra computation for semi-circle is unnecessary
+  if(pow((projectilePositionX-tank2X), 2) + pow((projectilePositionY - tank2Y), 2) < pow((tankDiameter/2), 2)) {
+    playerHasWon = 1;
+  }
+  else if(pow((projectilePositionX-tank1X), 2) + pow((projectilePositionY - tank1Y), 2) < pow((tankDiameter/2), 2)) {
+    playerHasWon = 2;
+  }
 }
 
 // Advance the turn to the next player
@@ -274,6 +304,11 @@ void keyPressed() {
         drawProjectile();
       }
       else {
+        projectileInMotion = true;
+        projectilePositionX = tank2CannonX2;
+        projectilePositionY = tank2CannonY2;
+        velocity = tank2CannonStrength;
+        drawProjectile();
       }
       
       break;
