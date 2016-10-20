@@ -35,7 +35,7 @@ PImage bg;
 
 // Terrain generation function adapted from: http://www.redblobgames.com/articles/noise/introduction.html
 void GenerateTerain() {
-    float amp[] = {2.0, 1.1, 0.2, 0.001, 0.01, 0.01};
+    float amp[] = {random(1.5,2.5), random(0.8,1.4), random(0.1, 0.3), random(0.0001, 0.002), 0.01, 0.01};
     int frequency[] = {1, 2, 4, 8, 16, 32};
     float phase = random(0, 2*PI);
     
@@ -59,18 +59,9 @@ void setup() {
   
   // Initialize the ground level
   groundLevel = new float[width];
-  float player1Height = random(height/2, height-5);
-  float player2Height = random(height/2, height-5);
-  for(float i = 0; i < width * 0.2; i++) {
-    groundLevel[(int)i] = player1Height;
-  }
-  for(float i = width * 0.2; i < width * 0.8; i++) {
-    groundLevel[(int)i] = player1Height + (player2Height - player1Height) * (i - width*0.2)/(width*0.6);
-  }
-  for(float i = width * 0.8; i < width; i++) {
-    groundLevel[(int)i] = player2Height;    
-  }
   GenerateTerain();
+  float player1Height = groundLevel[int(width*0.1)];
+  float player2Height = groundLevel[int(width*0.9)];
   
   // Set the location of the two tanks so they rest on the ground at opposite sides
   tank1X = width * 0.1;
