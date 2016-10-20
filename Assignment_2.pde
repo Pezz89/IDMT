@@ -16,6 +16,7 @@ float cannonLength = 25;  // How long the cannon on each tank extends
 float tank1CannonX1, tank1CannonX2, tank1CannonY1, tank1CannonY2;
 float tank2CannonX1, tank2CannonX2, tank2CannonY1, tank2CannonY2;
 float gravity = 0.05;      // Strength of gravity
+float velocity;
 
 // Current state of the game
 
@@ -104,6 +105,8 @@ void drawTanks() {
   tank1CannonY1 = tank1Y;
   tank1CannonY2 = tank1Y - (cannonLength * sin(tank1CannonAngle));
   line(tank1CannonX1, tank1CannonY1, tank1CannonX2, tank1CannonY2);
+  strokeCap(SQUARE);
+  
   strokeWeight(5);
   fill(0, 0, 255);
   arc(tank1X, tank1Y, tankDiameter, tankDiameter, PI, 2*PI);
@@ -118,9 +121,6 @@ void drawTanks() {
   strokeWeight(5);
   fill(255, 0, 0);
   arc(tank2X, tank2Y, tankDiameter, tankDiameter, PI, 2*PI);
-  
-
-  
 }
 
 // Draw the projectile, if one is currently in motion
@@ -172,10 +172,20 @@ void updateProjectilePositionAndCheckCollision() {
   /* TO IMPLEMENT IN STEP 4: GRAVITY */
   // Update the velocity of the projectile according to the value of gravity at the top of the file
   projectilePositionX += tank1CannonStrength * cos(tank1CannonAngle);
-  projectilePositionY += tank1CannonStrength * -sin(tank1CannonAngle);
+  projectilePositionY += (velocity * -sin(tank1CannonAngle));
+  velocity -= gravity;
+  
   /* TO IMPLEMENT IN STEP 5: COLLISION DETECTION */
   // Compare the location of the projectile to the ground and to the two tanks
-  // When the projectile hits something, it stops moving (change projectileInMotion)
+  // (Conditions ordered to avoid indexing error in final condition)
+  if(projectilePositionX > width || projectilePositionX < 0 || projectilePositionY > groundLevel[round(projectilePositionX)]) {
+    // When the projectile hits something, it stops moving (change projectileInMotion)
+    projectileInMotion = false;
+    nextPlayersTurn();
+  }
+  else if((projectilePositionX-center_x)^2 + (y - center_y)^2 < radius^2) {
+  }
+
   // When the projectile hits the ground, it's the next player's turn
   // When the projectile hits a tank, the other player wins
 }
@@ -194,6 +204,17 @@ float validateAngle(float angle) {
     angle = 0.0;
   }
   return angle;
+}
+float validateStrength(float strength) {
+    if(strength > 10.0)
+  {
+    strength = 10.0;
+  }
+  else if(strength < 1.0)
+  {
+    strength = 1.0;
+  }
+  return strength;
 }
 // Handle a key press: update the status of the current player's tank
 void keyPressed() {
@@ -223,6 +244,7 @@ void keyPressed() {
             break;
         }
         tank1CannonAngle = validateAngle(tank1CannonAngle);
+        tank1CannonStrength = validateStrength(tank1CannonStrength);
       }
       else
       {
@@ -237,6 +259,7 @@ void keyPressed() {
             break;
         }
         tank2CannonAngle = validateAngle(tank2CannonAngle);
+        tank2CannonStrength = validateStrength(tank2CannonStrength);
       }
       break;
       
@@ -247,6 +270,7 @@ void keyPressed() {
         projectileInMotion = true;
         projectilePositionX = tank1CannonX2;
         projectilePositionY = tank1CannonY2;
+        velocity = tank1CannonStrength;
         drawProjectile();
       }
       else {
