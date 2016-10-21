@@ -52,7 +52,8 @@
     prominent problem was an array indexing error that occured when the
     projectile left the screen. This was quickly fixed by adding conditions to
     check if the projectile was on screen before attempting to access the
-    groundLevel array.
+    groundLevel array.\\
+
 
     On completion of this, a number of further features were implemented to
     build on the basic game. These included adding graphics to the background
@@ -60,13 +61,27 @@
     adding a blast radius to projectiles when coliding with objects.
 
     \section*{Findings}
-    Project illustrated the cross-over between a number of animation and DSP
-    techniques: Terrain generation, framerate and collision detection.
+    It was observed that a number of DSP related techniques applied to
+    animations and content generation in this project.
+    For example, the generation of custom terrain was implemented by summing
+    sine waves of randomly varying amplitudes and phases. This generated hills
+    and valleys randomly (within pre-determined limits) to create a different
+    user experience for every game. Collision detection is also dependant on
+    sampling theory. For example, is fired directly from one tank to the other,
+    but the velocity is so high that it will cover over the width of the tank
+    in one frame, the projectile will appear to pass straight through the
+    target tank.\\
+
+    The other main features involved expanding on code that had been written
+    for previous tasks. for example, creating growing blast radiuses involved
+    checking for a collision with an object (such as the ground or a tank),
+    increasing the size of the object on each iteration, then checking for
+    collisions between the object and a tank.\\
     
-    The main difficulty, although still rather minor, lied in adjusting to the
-    java language. As familiar concepts such as passing variables by reference
-    do not exist in the language, learning the ``java/processing way'' of
-    implementing features was the main skill aquired in this project.
+    The main difficulty, although rather minor, lied in adjusting to the Java
+    language. As familiar concepts such as passing variables by reference do
+    not exist in the language, learning the ``Java/Processing way'' of
+    implementing features was the main skill aquired in this project.\\
 
     There are many further improvments that could be implemented in this
     project. However, it would be of great benefit to refactor a large amount
