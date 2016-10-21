@@ -44,7 +44,8 @@ PImage bg;
 // Terrain generation function adapted from: http://www.redblobgames.com/articles/noise/introduction.html
 // Generate varying hills and valleys for terrain.
 void GenerateTerain() {
-    // Store amplitudes (randomly generated within arbritrary limits) for each sine wave
+    // Store amplitudes (randomly generated within arbritrary limits) for each
+    // sine wave
     float amp[] = {random(1.5,2.5), random(0.8,1.4), random(0.1, 0.3), random(0.0001, 0.002), 0.01, 0.01};
     // Store frequencies (Hz) for each sine wave
     int frequency[] = {1, 2, 4, 8, 16, 32};
@@ -63,7 +64,8 @@ void GenerateTerain() {
         groundLevel[i] += (sin(2*PI * frequency[j]*i/width + phase)*amp[j])*30;
       }  
     }
-    // Apply an arbitrary offset to place terrain at appropriate level on screen
+    // Apply an arbitrary offset to place terrain at appropriate level on
+    // screen
     for(int i = 0; i < width; i++) {
       groundLevel[i] += height - (height / 3.5);
     }
@@ -83,7 +85,8 @@ void setup() {
   float player1Height = groundLevel[int(width*0.1)];
   float player2Height = groundLevel[int(width*0.9)];
   
-  // Set the location of the two tanks so they rest on the ground at opposite sides
+  // Set the location of the two tanks so they rest on the ground at opposite
+  // sides
   tank1X = width * 0.1;
   tank1Y = player1Height;
   tank2X = width * 0.9;
@@ -91,19 +94,21 @@ void setup() {
 }
 
 void draw() {
-  // Main draw loop. Farm out the individual tasks to other functions
-  // for clarity (though it could be equivalently implemented entirely in this function.)
+  // Main draw loop. Farm out the individual tasks to other functions for
+  // clarity (though it could be equivalently implemented entirely in this
+  // function.)
   
   // Set the background to the picture provided
   background(bg);
   
-  // run draw functions for respecitive elements of the game
+  // run draw functions for respective elements of the game
   drawTanks();
   drawGround();
   drawProjectile();
   drawStatus();
   
-  // draw projectiles at new positions and run collision detection for projectiles 
+  // draw projectiles at new positions and run collision detection for
+  // projectiles 
   updateProjectilePositionAndCheckCollision();
 }
 
@@ -116,7 +121,8 @@ void drawGround() {
   int idx;
   // for each groundLevel array element
   for(idx = 0; idx < groundLevel.length; idx++){
-    // create a vertex point at the position on the screen determined by the array index position at the height of the element in the array
+    // create a vertex point at the position on the screen determined by the
+    // array index position at the height of the element in the array
     vertex(idx, groundLevel[idx]);
   }
   // Apply two final vertices to fill space below generated vertices
@@ -127,9 +133,10 @@ void drawGround() {
   fill(250, 236, 157);
   endShape();
   
-  // Set preceeding shapes to not have a border
+  // Set future shapes to not have a border
   noStroke();
-  // create layered ground with different colour and dimensions for aesthetic effect
+  // create layered ground with different colour and dimensions for aesthetic
+  // effect
   // Logic is essentially the same as above
   beginShape();
   for(idx = 0; idx < groundLevel.length; idx++){
@@ -142,7 +149,7 @@ void drawGround() {
   strokeWeight(5);
   
   // See the groundLevel[] variable to know where to draw the ground
-  // Ground should be drawn in a dark gray
+  // Ground should be drawn in a dark grey
 
 }
 
@@ -150,18 +157,21 @@ void drawGround() {
 void drawTanks() {
   /* TO IMPLEMENT IN STEP 1 */
   
-  // Draw the two tanks as semicircles using the positions and sizes at the top of the file
+  // Draw the two tanks as semicircles using the positions and sizes at the top
+  // of the file
   // Tanks should be different colours
-  // Also be sure to draw the cannons, using the angles given at the top of the file
+  // Also be sure to draw the cannons, using the angles given at the top of the
+  // file
   
   // Draw tank 1
   
   // Set size of border to 10 pixels
   strokeWeight(10);
   
-  // set variable for placing tank 1 cannon at the center of the tank
+  // set variable for placing tank 1 cannon at the centre of the tank
   tank1CannonX1 = tank1X;
-  // set variable for placing the tip of the cannon at the angle and length specified
+  // set variable for placing the tip of the cannon at the angle and length
+  // specified
   tank1CannonX2 = tank1X + (cannonLength * cos(tank1CannonAngle));
   // similar to above...
   tank1CannonY1 = tank1Y;
@@ -176,7 +186,8 @@ void drawTanks() {
   strokeWeight(5);
   fill(255, 0, 0);
   // draw 1 tank body
-  // arc was replaced with ellipse to account for more detailed varying ground level
+  // arc was replaced with ellipse to account for more detailed varying ground
+  // level
   ellipse(tank1X, tank1Y, tankDiameter, tankDiameter);
   
   // Draw tank 2
@@ -194,7 +205,8 @@ void drawTanks() {
 
 // Draw the projectile, if one is currently in motion
 void drawProjectile() {
-  // Don't draw anything if there's no projectile in motion and the porjectile isn't exploding
+  // Don't draw anything if there's no projectile in motion and the projectile
+  // isn't exploding
   if(!projectileInMotion && !contactMade)  
     return;
   // if projectile has exploded enough then stop
@@ -227,9 +239,11 @@ void drawStatus() {
   stroke(230, 249, 211);
   // Set shape fill colour RGB
   fill(201, 246, 203);
-  // Draw a background rectangular box to seperate information bar from background
+  // Draw a background rectangular box to separate information bar from
+  // background
   rect(0, 0, width, 45);
-  // reset global values to their originals, avoiding unexpected behaviour in other functions
+  // reset global values to their originals, avoiding unexpected behaviour in
+  // other functions
   strokeWeight(strokeWeightVar);
   stroke(strokeColourVar);
   
@@ -238,7 +252,8 @@ void drawStatus() {
   textAlign(LEFT);
   fill(0);
   
-  // Based on current state of game, display relevant information in information bar
+  // Based on current state of game, display relevant information in
+  // information bar
   if(playerHasWon == 1)
     text("Player 1 Wins!", 10, 30);
   else if(playerHasWon == 2)
@@ -263,7 +278,10 @@ void updateProjectilePositionAndCheckCollision() {
     return;
   }
   // Check for player's turn
-  // This implementation could be vastly improved by creating a generic function that applies operations to either player 1 or 2 based on this boolean. An object oriented approach or a way of passing variables by refference to a generic function would achieve this.
+  // This implementation could be vastly improved by creating a generic
+  // function that applies operations to either player 1 or 2 based on this
+  // boolean. An object oriented approach or a way of passing variables by
+  // reference to a generic function would achieve this.
   if(player1Turn) {
     /* TO IMPLEMENT IN STEP 3: UPDATE POSITION */
     
@@ -280,17 +298,21 @@ void updateProjectilePositionAndCheckCollision() {
     }
     
     /* TO IMPLEMENT IN STEP 4: GRAVITY */
-    // Update the velocity of the projectile according to the value of gravity at the top of the file
+    // Update the velocity of the projectile according to the value of gravity
+    // at the top of the file
     velocity -= gravity;
     
     /* TO IMPLEMENT IN STEP 5: COLLISION DETECTION */
-    // Compare the location of the projectile to the ground and to the two tanks
+    // Compare the location of the projectile to the ground and to the two
+    // tanks
     // (Conditions ordered to avoid indexing error in final condition)
    
     // When the projectile hits the ground, it's the next player's turn
     if(round(projectilePositionX) >= width || round(projectilePositionX) <= 0) {
-      // When the projectile hits something, it stops moving (change projectileInMotion)
-      // As projectile has finished moving and exploding, set all relevant booleans to false, ready for next player's turn
+      // When the projectile hits something, it stops moving (change
+      // projectileInMotion)
+      // As projectile has finished moving and exploding, set all relevant
+      // booleans to false, ready for next player's turn
       projectileInMotion = false;
       contactMade = false;
       nextPlayersTurn();
@@ -304,7 +326,9 @@ void updateProjectilePositionAndCheckCollision() {
     }
 
   }
+  // Same as for player 1
   else {
+    
     /* TO IMPLEMENT IN STEP 3: UPDATE POSITION */
     
     // Tasks: increment the position according to the velocity
@@ -321,12 +345,13 @@ void updateProjectilePositionAndCheckCollision() {
     velocity -= gravity;
     
     /* TO IMPLEMENT IN STEP 5: COLLISION DETECTION */
-    // Compare the location of the projectile to the ground and to the two tanks
-    // (Conditions ordered to avoid indexing error in final condition)
+    // Compare the location of the projectile to the ground and to the two
+    // tanks
    
     // When the projectile hits the ground, it's the next player's turn
     if(projectilePositionX >= width || projectilePositionX <= 0) {
-      // When the projectile hits something, it stops moving (change projectileInMotion)
+      // When the projectile hits something, it stops moving (change
+      // projectileInMotion)
       projectileInMotion = false;
       contactMade = false;
       nextPlayersTurn();
@@ -338,15 +363,17 @@ void updateProjectilePositionAndCheckCollision() {
     }
   }  
   // When the projectile hits a tank, the other player wins
-  // Collision detection for full circle implemented as extra computation for semi-circle is unnecessary
   if(dist(projectilePositionX, projectilePositionY, tank2X, tank2Y) < (tankDiameter/2.0) + (projectileSize / 2)) {
     projectileInMotion = false;
     contactMade = true;
+    // If projectile shape comes into contact with player 2's tank, player 1
+    // wins 
     playerHasWon = 1;
   }
   else if(dist(projectilePositionX, projectilePositionY, tank1X, tank1Y) < (tankDiameter/2.0) + (projectileSize / 2)) {
     projectileInMotion = false;
     contactMade = true;
+    // Vice versa
     playerHasWon = 2;
   }
 }
@@ -355,6 +382,8 @@ void updateProjectilePositionAndCheckCollision() {
 void nextPlayersTurn() {
   player1Turn = !player1Turn;
 }
+
+// Check angle is limited from 9 o'clock to 3 o'clock
 float validateAngle(float angle) {
     if(angle > PI)
   {
@@ -364,8 +393,11 @@ float validateAngle(float angle) {
   {
     angle = 0.0;
   }
+  // return angle within limited range
   return angle;
 }
+
+// Limit strength to within reasonable values
 float validateStrength(float strength) {
     if(strength > 10.0)
   {
@@ -391,19 +423,26 @@ void keyPressed() {
   // Arrow keys don't have a printable character, so they show up as CODED
   // Use the left and right arrows to adjust the angle, the up and down arrows
   // to adjust strength.
+  
+  // Specify cases based on the key that has been pressed
   switch(key) {
+    // If key is a special character
     case CODED: 
       if(player1Turn) {
+        // Specify actions for up, down left and right
         switch(keyCode) {
+          // Left and right increment/decrement cannon angle by 1 radian
           case LEFT: tank1CannonAngle += PI/180.0;
             break;
           case RIGHT: tank1CannonAngle -= PI/180.0;
             break;
+          // Up and down increment/decrement cannon strength by 1.0
           case UP: tank1CannonStrength += 1;
             break;
           case DOWN: tank1CannonStrength -= 1;
             break;
         }
+        // Ensure updated values are within preset ranges
         tank1CannonAngle = validateAngle(tank1CannonAngle);
         tank1CannonStrength = validateStrength(tank1CannonStrength);
       }
@@ -427,11 +466,14 @@ void keyPressed() {
     // Space bar fires the projectile. Initially in step 2, just have it switch
     // to the next player.
     case ' ':
+      // Set boolean variables and projectile positions relative to the current
+      // player's tank.
       if(player1Turn) {
         projectileInMotion = true;
         projectilePositionX = tank1CannonX2;
         projectilePositionY = tank1CannonY2;
         velocity = tank1CannonStrength;
+        // Generate projectile based on global variables
         drawProjectile();
       }
       else {
